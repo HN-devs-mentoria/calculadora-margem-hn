@@ -1,0 +1,21 @@
+{
+  "name": "calculadora-margem-hn",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Calculadora de margem multi-marketplace do Henrique Niada. Roda 100% na sua máquina, sem contas, sem servidor e sem internet.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.0",
+    "vite": "^8.2.2"
+  }
+}
