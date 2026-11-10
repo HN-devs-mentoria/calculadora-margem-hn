@@ -1,3 +1,5 @@
+import { useState } from "react";
+import ProdutoMcp, { praticadoTexto } from "./ProdutoMcp.jsx";
 import { MARKETPLACES, CATEGORIAS_GLOBAIS, TAMANHOS } from "../../lib/marketplaces";
 import { fmtBRL, fmtPct, markRgb } from "../../lib/format";
 import {
@@ -14,8 +16,9 @@ export function faixaMargem(m) {
 }
 
 export default function Calculadora({ calc }) {
+  const [praticados, setPraticados] = useState(null);
   const {
-    modo, metaTipo, setMetaTipo, tipoAnuncio, setTipoAnuncio,
+    modo, setModo, metaTipo, setMetaTipo, tipoAnuncio, setTipoAnuncio,
     shopeeConta, setShopeeConta, shopeeCpfAlto, setShopeeCpfAlto,
     selecionados, toggleMarketplace, overrides, setOverride,
     form, setCampo, limparCampos, resultados, ordenarPor, setOrdenarPor, temDados,
@@ -38,6 +41,16 @@ export default function Calculadora({ calc }) {
               <p>Informe os dados para comparar os marketplaces</p>
             </div>
           </div>
+
+          <ProdutoMcp
+            onEscolher={(anuncio, precos) => {
+              setPraticados(precos);
+              if (anuncio?.preco != null && anuncio.moeda === "BRL") {
+                setModo("direto");
+                setCampo("precoVenda", String(anuncio.preco));
+              }
+            }}
+          />
 
           <div className="frow">
             <Campo label="Custo do produto (R$)" icon={<IconCoins size={15} />} val={form.custo} on={(v) => setCampo("custo", v)} />
@@ -279,6 +292,7 @@ export default function Calculadora({ calc }) {
                 <tr>
                   <th className="col-rank">#</th>
                   <th>Marketplace</th>
+                  {praticados && <th>Você pratica</th>}
                   {modo === "reverso" ? (
                     <><th>Anunciar</th><th>À venda</th><th>Taxas + frete</th></>
                   ) : (
@@ -303,6 +317,7 @@ export default function Calculadora({ calc }) {
                           </span>
                         </div>
                       </td>
+                      {praticados && <td data-rotulo="Você pratica">{praticadoTexto(praticados[mp.id])}</td>}
                       {r.erro ? (
                         <td colSpan={5} className="err"><IconAlert size={13} /> {r.erro}</td>
                       ) : modo === "reverso" ? (

@@ -7,3 +7,6 @@ dist
 .tools/node
 .tools/server.pid
 .tools/server.log
+
+# Dados pessoais gerados pelo agente (MCPSeller) — nunca versionar
+public/dados/

@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node test.js"
+    "test": "node test.js && node --test tests/*.test.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

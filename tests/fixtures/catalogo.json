@@ -1,0 +1,17 @@
+{
+  "versao": 1,
+  "workspace_id": "empresa-exemplo",
+  "conta": "Empresa Exemplo",
+  "gerado_em": "2026-11-10T18:21:44Z",
+  "fontes": [
+    { "connection_id": "loja-shopee", "loja": "Loja Shopee Exemplo", "marketplace": "shopee", "completa": true, "observado_em": "2026-11-10T18:00:35Z", "avisos": [] },
+    { "connection_id": "loja-magalu", "loja": "Loja Magalu Exemplo", "marketplace": "magalu", "completa": false, "observado_em": "2026-11-10T17:55:00Z", "avisos": ["Magalu não informa preço e estoque na listagem."] },
+    { "connection_id": "loja-tiktok", "loja": "Loja TikTok Exemplo", "marketplace": "tiktok-shop", "completa": true, "observado_em": "2026-11-10T18:05:00Z", "avisos": [] }
+  ],
+  "anuncios": [
+    { "connection_id": "loja-shopee", "marketplace": "shopee", "listing_id": "1001", "variation_id": null, "sku": "PRODUTO-01", "titulo": "Produto de exemplo 01", "status": "NORMAL", "preco": 100, "moeda": "BRL", "estoque": 12, "atualizado_em": "2026-11-09T10:00:00Z", "observado_em": "2026-11-10T18:00:35Z" },
+    { "connection_id": "loja-shopee", "marketplace": "shopee", "listing_id": "1001", "variation_id": "azul", "sku": "PRODUTO-01", "titulo": "Produto de exemplo 01 — azul", "status": "NORMAL", "preco": 120, "moeda": "BRL", "estoque": 3, "atualizado_em": null, "observado_em": "2026-11-10T18:00:35Z" },
+    { "connection_id": "loja-magalu", "marketplace": "magalu", "listing_id": "MG-77", "variation_id": null, "sku": "PRODUTO-01", "titulo": "Produto de exemplo 01", "status": "active", "preco": null, "moeda": null, "estoque": null, "atualizado_em": null, "observado_em": "2026-11-10T17:55:00Z" },
+    { "connection_id": "loja-tiktok", "marketplace": "tiktok-shop", "listing_id": "TT-9", "variation_id": null, "sku": null, "titulo": "Produto <script>alert(1)</script> exemplo", "status": "LIVE", "preco": 89.9, "moeda": "BRL", "estoque": 5, "atualizado_em": null, "observado_em": "2026-11-10T18:05:00Z" }
+  ]
+}
