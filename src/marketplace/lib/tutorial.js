@@ -6,7 +6,8 @@
  * POR (troca só a leitura, sem recalcular nada).
  *
  * `alvo` é o data-tour do elemento a destacar. `precisaResultados` marca os
- * passos que só existem depois que há dados preenchidos.
+ * passos que só existem depois que há dados preenchidos. `etapa` abre o passo
+ * da coluna da esquerda onde o alvo está (ela mostra um passo por vez).
  */
 
 export const CHAVE_TUTORIAL = "calc-mkt:tutorial";
@@ -32,22 +33,25 @@ export const PASSOS = [
     alvo: "modo",
     titulo: "Comece pela pergunta certa",
     texto:
-      "Este seletor troca o que a calculadora procura. “Já tenho preço” responde quanto sobra daquele valor. “Quanto anunciar” faz o contrário: você diz o lucro que quer e ela descobre o preço. É a decisão que mais muda o resultado.",
+      "Este seletor, no alto da coluna, troca o que a calculadora procura. “Já tenho preço” responde quanto sobra daquele valor. “Quanto anunciar” faz o contrário: você diz o lucro que quer e ela descobre o preço. É a decisão que mais muda o resultado.",
   },
   {
     alvo: "produto",
+    etapa: 1,
     titulo: "O que entra no custo",
     texto:
       "Custo e custos extras são a base. A categoria define a comissão de cada canal, e peso e tamanho definem o frete — por isso dois produtos do mesmo preço podem ter margens bem diferentes.",
   },
   {
     alvo: "meta",
+    etapa: 2,
     titulo: "Margem ou lucro fixo?",
     texto:
       "Margem (%) é autoescalável: se o custo dobrar, o preço acompanha e a fatia continua a mesma. Lucro fixo (R$) trava os reais por venda — o preço sobe menos e a margem encolhe. Use margem para política de preço, lucro fixo quando um valor por unidade precisa aparecer.",
   },
   {
     alvo: "marketplaces",
+    etapa: 3,
     titulo: "Quem entra na comparação",
     texto:
       "Escolha os canais. Quando o Mercado Livre ou a Shopee estão ligados, aparecem opções que mudam a conta: tipo de anúncio (clássico ou premium) e conta CPF ou CNPJ.",
@@ -84,7 +88,7 @@ export const PASSOS = [
     alvo: "avancadas",
     titulo: "De estimativa para número real",
     texto:
-      "As taxas padrão vêm de tabelas públicas e variam por contrato, reputação e campanha. Aqui você sobrescreve comissão, taxa fixa e frete com os números que a sua conta realmente paga — é o que separa uma simulação de uma decisão.",
+      "Na engrenagem você troca comissão, taxa fixa e frete pelos números que a sua conta realmente paga. As taxas padrão vêm de tabelas públicas e variam por contrato, reputação e campanha — é o que separa uma simulação de uma decisão.",
   },
   {
     alvo: "autor",

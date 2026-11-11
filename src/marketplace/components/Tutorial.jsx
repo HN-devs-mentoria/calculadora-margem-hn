@@ -14,7 +14,7 @@ const BORDA = 14;    // margem mínima até a borda da tela
  * renderização — textos de tamanhos diferentes mudam a altura, e chutar um
  * valor fixo fazia o cartão sair da tela ou cobrir o próprio alvo.
  */
-export default function Tutorial({ onFechar, garantirExemplo }) {
+export default function Tutorial({ onFechar, garantirExemplo, irParaEtapa }) {
   const [i, setI] = useState(0);
   const [area, setArea] = useState(null);
   const [pos, setPos] = useState(null);
@@ -37,12 +37,13 @@ export default function Tutorial({ onFechar, garantirExemplo }) {
   // Prepara o passo: garante os dados, rola o alvo até a vista e mede.
   useEffect(() => {
     if (passo.precisaResultados) garantirExemplo();
+    if (passo.etapa) irParaEtapa?.(passo.etapa); // a coluna mostra um passo por vez
     setPos(null);
     const el = document.querySelector(`[data-tour="${passo.alvo}"]`);
     el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
     const t = setTimeout(medir, 240);
     return () => clearTimeout(t);
-  }, [i, passo, medir, garantirExemplo]);
+  }, [i, passo, medir, garantirExemplo, irParaEtapa]);
 
   useEffect(() => {
     window.addEventListener("resize", medir);

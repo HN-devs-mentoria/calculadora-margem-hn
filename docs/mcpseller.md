@@ -99,6 +99,7 @@ sendo digitado pelo usuário, como no modo manual.
 | `preco`, `moeda`, `estoque` | `price`, `currency`, `available_quantity` |
 | `atualizado_em`, `observado_em` | `provider_updated_at`, `observed_at` |
 | `marketplace` | igual ao do MCPSeller: `mercadolivre`, `amazon`, `magalu`, `shopee`, `shein`, `tiktok-shop` |
+| `imagem` (opcional) | URL `https` da foto principal do anúncio, se o registro trouxer (ex.: `thumbnail`, `picture`, `image_url`); senão `null`. Vira a miniatura do produto escolhido. |
 
 Datas em ISO 8601 **com fuso**. Números como número (nunca texto), finitos e não negativos.
 O mesmo anúncio + variação não pode aparecer duas vezes. O SKU pode repetir.

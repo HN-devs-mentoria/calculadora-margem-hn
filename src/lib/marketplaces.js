@@ -6,7 +6,7 @@
  * ⚠️ Os valores são DEFAULTS realistas baseados nas tabelas públicas vigentes
  * (revisão em agosto/2026). Variam por contrato, logística,
  * reputação, categoria exata e campanhas — por isso TODOS são editáveis na
- * interface ("Regras avançadas"). Última revisão das regras: maio/2026.
+ * interface ("Ajustar taxas por marketplace"). Última revisão das regras: maio/2026.
  *
  * MODELOS DE COMISSÃO (campo `modeloComissao`):
  *   - "categoria"            : comissão fixa por categoria (Amazon, Magalu, Shein)
@@ -198,7 +198,7 @@ const MARKETPLACES = {
     freteTabela: FRETE_PADRAO,
     // Na Shopee a comissão é a mesma em TODAS as categorias (vem das faixas de
     // preço), então aqui só marcamos o fallback. Beleza pode variar 18–22% em
-    // algumas subcategorias — ajuste em "Regras avançadas" se for o seu caso.
+    // algumas subcategorias — ajuste em "Ajustar taxas por marketplace" se for o seu caso.
     categorias: {
       outros: { nome: "Todas as categorias (regra por faixa de preço)" },
     },
@@ -222,6 +222,28 @@ const MARKETPLACES = {
     taxaFixa: 0,
     fretePagoPeloSeller: true,
     freteGratisAcimaDe: 0,
+    freteTabela: FRETE_PADRAO,
+  },
+
+  /*
+   * TikTok Shop — "Guia 2026 | Comissões e taxas do TikTok Shop explicadas"
+   * (seller.tiktok.com/br/blog, vigência 15/07/2026), sobre o preço após o
+   * desconto do vendedor:
+   *   abaixo de R$ 50 → 10% + R$ 4 por item; R$ 50 ou mais → 6% + R$ 6 por item.
+   * Programa de Taxas de Envio (padrão, pode sair): 6% do preço, teto R$ 50.
+   * Não modelado: 0% por 60 dias para novos vendedores (temporário).
+   */
+  "tiktok-shop": {
+    id: "tiktok-shop",
+    nome: "TikTok Shop",
+    cor: "#fe2c55",
+    modeloComissao: "faixaPreco",
+    faixasComissao: [
+      { ateValor: 49.99, comissao: 0.1, taxaFixa: 4, rotulo: "abaixo de R$ 50" },
+      { ateValor: Infinity, comissao: 0.06, taxaFixa: 6, rotulo: "R$ 50 ou mais" },
+    ],
+    fretePagoPeloSeller: false,
+    taxaServicoEnvio: { rate: 0.06, teto: 50 },
     freteTabela: FRETE_PADRAO,
   },
 };

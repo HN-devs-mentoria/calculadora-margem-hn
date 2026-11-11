@@ -40,7 +40,7 @@ function faixaPara(tabela, preco) {
  * Retorna { comissaoRate, comissaoValor, taxaFixa }.
  */
 function tarifasMarketplace(mp, params, precoVenda) {
-  // Override manual de comissão (campo "Regras avançadas") tem prioridade.
+  // Override manual de comissão (campo "Ajustar taxas por marketplace") tem prioridade.
   if (params.overrideComissao != null && !Number.isNaN(params.overrideComissao)) {
     return {
       comissaoRate: params.overrideComissao,
@@ -101,6 +101,10 @@ function taxaFixaBase(mp, params, precoVenda) {
 function calcularFrete(mp, params, precoVenda) {
   if (params.overrideFrete != null && !Number.isNaN(params.overrideFrete)) {
     return params.overrideFrete;
+  }
+  // TikTok Shop: no programa de envio, o seller paga só a taxa de serviço.
+  if (mp.taxaServicoEnvio && params.tiktokSfp !== false) {
+    return Math.min(precoVenda * mp.taxaServicoEnvio.rate, mp.taxaServicoEnvio.teto);
   }
   if (!mp.fretePagoPeloSeller) return 0;
   // Abaixo do limiar de frete grátis, normalmente o comprador paga o frete.

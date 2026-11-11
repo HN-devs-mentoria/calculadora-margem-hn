@@ -4,15 +4,19 @@ import Tutorial from "../components/Tutorial";
 import { tutorialVisto, marcarTutorialVisto } from "../lib/tutorial";
 import Calculadora from "../components/Calculadora";
 import Insights from "../components/Insights";
-import {
-  IconChart, IconTarget, IconCalculator, IconBulb, IconInstagram, IconArrowRight,
-} from "../components/icons";
+import { IconInstagram, IconArrowRight } from "../components/icons";
+
+import mcpSimbolo from "../assets/mcp-simbolo.png";
+import mcpTexto from "../assets/mcp-texto.png";
 
 const INSTAGRAM = "henriqueniada";
 
 export default function Dashboard() {
   const calc = useCalculadora(FORM_VAZIO);
+  const [produto, setProduto] = useState(null); // { anuncio, praticados } escolhido no MCPSeller
+  const praticados = produto?.praticados ?? null;
   const [tour, setTour] = useState(() => !tutorialVisto());
+  const [etapa, setEtapa] = useState(1); // passo aberto na coluna da esquerda
 
   function fecharTour() {
     marcarTutorialVisto();
@@ -34,59 +38,18 @@ export default function Dashboard() {
 
   return (
     <div className="app">
-      <header className="topbar">
-        <div className="topbar-inner">
-          <span className="brand">
-            <span className="icon-box lg"><IconChart size={19} /></span>
-            <span>
-              Calculadora de Margem
-              <span className="brand-sub">Multi-marketplace</span>
-            </span>
-          </span>
-
-          <p className="tagline">Mais dados. Melhores decisões. Mais vendas.</p>
-
-          <div className="modo-switch" data-tour="modo">
-            <span className="modo-label">Modo de cálculo</span>
-            <div className="seg seg--topbar">
-              <button
-                type="button"
-                className={calc.modo === "direto" ? "active" : ""}
-                onClick={() => calc.setModo("direto")}
-              >
-                <IconCalculator size={14} /> Já tenho preço
-              </button>
-              <button
-                type="button"
-                className={calc.modo === "reverso" ? "active" : ""}
-                onClick={() => calc.setModo("reverso")}
-              >
-                <IconTarget size={14} /> Quanto anunciar
-              </button>
-            </div>
-          </div>
-
-          <div className="tb-user">
-            <span className="tb-autor">
-              por <b>Henrique Niada</b>
-            </span>
-            <button
-              className="btn-secondary btn-icone"
-              onClick={() => setTour(true)}
-              title="Rever o tutorial"
-              aria-label="Rever o tutorial"
-            >
-              <IconBulb size={15} />
-            </button>
-          </div>
-        </div>
-      </header>
+      {/* Espaço do antigo banner do topo, vazio por enquanto. */}
+      <div className="topo-vazio" aria-hidden="true" />
 
       <div className="workspace">
-        <Calculadora calc={calc} />
+        <Calculadora
+          calc={calc} produto={produto} onProduto={setProduto}
+          etapa={etapa} setEtapa={setEtapa}
+          onTutorial={() => setTour(true)}
+        />
 
         <aside className="col-lateral">
-          <Insights resultados={calc.temDados ? calc.resultados : []} />
+          <Insights resultados={calc.temDados ? calc.resultados : []} praticados={praticados} />
 
           <section className="card panel-bloco panel-hn" data-tour="autor">
             <div className="bloco-head">
@@ -111,10 +74,18 @@ export default function Dashboard() {
               @{INSTAGRAM} <IconArrowRight size={15} />
             </a>
           </section>
+
+          <div className="mcp-fundo" role="img" aria-label="MCP Seller">
+            <span className="mcp-onda" /><span className="mcp-onda" /><span className="mcp-onda" />
+            <div className="mcp-marca" style={{ "--u-simbolo": `url(${mcpSimbolo})`, "--u-texto": `url(${mcpTexto})` }}>
+              <span className="mcp-simbolo"><img src={mcpSimbolo} alt="" width="66" height="62" /><i className="mcp-glare" /></span>
+              <i className="mcp-texto" />
+            </div>
+          </div>
         </aside>
       </div>
 
-      {tour && <Tutorial onFechar={fecharTour} garantirExemplo={garantirExemplo} />}
+      {tour && <Tutorial onFechar={fecharTour} garantirExemplo={garantirExemplo} irParaEtapa={setEtapa} />}
     </div>
   );
 }

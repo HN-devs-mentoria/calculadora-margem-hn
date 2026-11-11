@@ -21,16 +21,47 @@ export function praticadoTexto(p) {
   return p.min === p.max ? fmtBRL(p.min) : `${fmtBRL(p.min)} – ${fmtBRL(p.max)}`;
 }
 
-/** Busca um produto do MCPSeller e devolve (anúncio, preços praticados por canal) a quem chamou. */
-export default function ProdutoMcp({ onEscolher }) {
+/** Iniciais do título, mostradas quando o anúncio não tem imagem. */
+const iniciais = (t) => t.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+
+function Miniatura({ src, titulo }) {
+  const [falhou, setFalhou] = useState(false);
+  return (
+    <span className="mcp-thumb" aria-hidden="true">
+      {src && !falhou
+        ? <img src={src} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setFalhou(true)} />
+        : iniciais(titulo)}
+    </span>
+  );
+}
+
+/**
+ * Busca um produto do MCPSeller. Controlado por quem chama: `produto` é
+ * { anuncio, praticados } ou null, e sobrevive à troca de passo da coluna.
+ */
+export default function ProdutoMcp({ produto, onEscolher }) {
   const [catalogo, setCatalogo] = useState(null);
   const [erro, setErro] = useState(null);
   const [termo, setTermo] = useState("");
-  const [escolhido, setEscolhido] = useState(null);
 
   useEffect(() => {
     carregar().then(setCatalogo, (e) => setErro(e.message));
   }, []);
+
+  if (produto) {
+    const { anuncio, praticados } = produto;
+    const canais = Object.entries(praticados).map(([canal, p]) => `${nomeCanal(canal)} ${praticadoTexto(p)}`).join(" · ");
+    return (
+      <div className="mcp-produto">
+        <Miniatura key={anuncio.imagem} src={anuncio.imagem} titulo={anuncio.titulo} />
+        <div className="mcp-produto-txt">
+          <strong title={anuncio.titulo}>{anuncio.titulo}</strong>
+          <small>{anuncio.sku ? `SKU ${anuncio.sku}` : "sem SKU"} · {canais}</small>
+          {anuncio.preco === null && <small className="mcp-msg--erro">Anúncio sem preço: informe o preço no passo 2.</small>}
+        </div>
+      </div>
+    );
+  }
 
   if (erro) return <p className="mcp-msg mcp-msg--erro">Arquivo do MCPSeller inválido: {erro}</p>;
   if (!catalogo) {
@@ -42,37 +73,10 @@ export default function ProdutoMcp({ onEscolher }) {
   }
 
   const parcial = catalogo.fontes.some((f) => !f.completa);
-  const rodape = (
-    <small className="mcp-msg">
-      Dados do MCPSeller de {fmtData(catalogo.gerado_em)} · {catalogo.anuncios.length} anúncios{parcial ? " · leitura parcial" : ""}
-    </small>
-  );
-
-  if (escolhido) {
-    const { anuncio, praticados } = escolhido;
-    return (
-      <div className="mcp mcp--escolhido">
-        <span className="label">Produto do MCPSeller</span>
-        <strong className="mcp-titulo">{anuncio.titulo}</strong>
-        <small className="mcp-msg">
-          {anuncio.sku ? `SKU ${anuncio.sku}` : "sem SKU"} · anunciado em{" "}
-          {Object.entries(praticados).map(([canal, p]) => `${nomeCanal(canal)} (${praticadoTexto(p)})`).join(", ")}
-        </small>
-        {anuncio.preco === null && <small className="mcp-msg mcp-msg--erro">Este anúncio veio sem preço: informe o preço abaixo.</small>}
-        <button type="button" className="mcp-trocar" onClick={() => { setEscolhido(null); onEscolher(null, null); }}>
-          Trocar produto
-        </button>
-        {rodape}
-      </div>
-    );
-  }
-
   const achados = buscarAnuncios(catalogo, termo);
   const escolher = (a) => {
-    const praticados = precosPraticados(catalogo, a);
-    setEscolhido({ anuncio: a, praticados });
     setTermo("");
-    onEscolher(a, praticados);
+    onEscolher({ anuncio: a, praticados: precosPraticados(catalogo, a) });
   };
 
   return (
@@ -96,7 +100,9 @@ export default function ProdutoMcp({ onEscolher }) {
         ) : (
           <small className="mcp-msg">Nenhum produto encontrado.</small>
         ))}
-      {rodape}
+      <small className="mcp-msg">
+        Dados de {fmtData(catalogo.gerado_em)} · {catalogo.anuncios.length} anúncios{parcial ? " · leitura parcial" : ""}
+      </small>
     </div>
   );
 }

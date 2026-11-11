@@ -31,3 +31,35 @@ export const markRgb = (hex) => {
   const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
   return lum < 0.25 ? "214 214 224" : `${r} ${g} ${b}`;
 };
+
+/** Nome simples da faixa de margem (mesmos limites de faixaMargem). */
+export const nomeFaixa = (m) => {
+  if (m == null || Number.isNaN(m)) return "";
+  if (m < 0) return "no prejuízo";
+  if (m < 0.06) return "apertada";
+  if (m < 0.1) return "razoável";
+  return "saudável";
+};
+
+/**
+ * Para onde vai cada real: custos não nulos e o lucro, para uma barra única.
+ * Com prejuízo, a barra soma só os custos (passam do preço) e não há fatia de lucro.
+ */
+export function fatiasDoPreco(r) {
+  const fatias = [
+    ["custo", "Custo do produto", r.custo],
+    ["extras", "Custos extras", r.extras],
+    ["comissao", "Comissão", r.comissaoValor],
+    ["taxa", "Taxa fixa", r.taxaFixaMp],
+    ["frete", "Frete", r.frete],
+    ["imposto", "Imposto", r.imposto],
+    ["lucro", "Lucro", r.lucro],
+  ]
+    .filter(([, , valor]) => valor > 0.004)
+    .map(([id, rotulo, valor]) => ({ id, rotulo, valor }));
+  const total = r.lucro >= 0 ? r.precoVenda : fatias.reduce((s, f) => s + f.valor, 0);
+  return { fatias, total };
+}
+
+/** "no Mercado Livre", "na Amazon": preposição certa antes do nome do canal. */
+export const noCanal = (mp) => `${["mercadolivre", "tiktok-shop"].includes(mp.id) ? "no" : "na"} ${mp.nome}`;

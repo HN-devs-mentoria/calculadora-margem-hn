@@ -41,6 +41,13 @@ function numeroOuNull(v, campo) {
   return v;
 }
 
+/** Endereço de imagem: só https, para a miniatura nunca carregar outro protocolo. */
+function imagemOuNull(v, campo) {
+  if (v === null || v === undefined) return null;
+  if (typeof v !== "string" || !/^https:\/\/[^\s"'<>]+$/.test(v)) falha(campo, "deve ser um endereço https");
+  return v;
+}
+
 function lista(v, campo) {
   if (!Array.isArray(v)) falha(campo, "deve ser uma lista");
   return v;
@@ -130,6 +137,7 @@ export function validarCatalogo(valor) {
       variation_id: textoOuNull(a.variation_id, `${p}.variation_id`),
       sku: textoOuNull(a.sku, `${p}.sku`),
       titulo: texto(a.titulo, `${p}.titulo`),
+      imagem: imagemOuNull(a.imagem, `${p}.imagem`),
       status: textoOuNull(a.status, `${p}.status`),
       preco: numeroOuNull(a.preco, `${p}.preco`),
       moeda: textoOuNull(a.moeda, `${p}.moeda`),
@@ -153,5 +161,32 @@ export function validarCatalogo(valor) {
     gerado_em: data(raiz.gerado_em, "gerado_em"),
     fontes,
     anuncios,
+  };
+}
+
+/**
+ * Compara os canais onde o produto já é vendido com o de maior lucro e o de maior
+ * margem, entre os simulados (validos = [{ marketplace, resultado }] sem erro).
+ * Canais praticados sem simulação (ex.: TikTok Shop) vão em semSimulacao.
+ */
+export function compararCanais(validos, praticados) {
+  const maior = (campo) => validos.reduce((m, v) => (m === null || v.resultado[campo] > m.resultado[campo] ? v : m), null);
+  const melhorLucro = maior("lucro");
+  const melhorMargem = maior("margem");
+  const ids = Object.keys(praticados ?? {});
+  const lista = validos
+    .filter((v) => ids.includes(v.marketplace.id))
+    .sort((a, b) => b.resultado.lucro - a.resultado.lucro)
+    .map((item) => ({
+      item,
+      faltaLucro: melhorLucro.resultado.lucro - item.resultado.lucro,
+      faltaPontos: (melhorMargem.resultado.margem - item.resultado.margem) * 100,
+    }));
+  return {
+    melhorLucro,
+    melhorMargem,
+    praticados: lista,
+    semSimulacao: ids.filter((id) => !validos.some((v) => v.marketplace.id === id)),
+    jaNoMelhorLucro: lista.some((p) => p.item === melhorLucro),
   };
 }
